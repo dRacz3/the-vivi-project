@@ -23,4 +23,4 @@ jobs:
           # surge.sh token, generate it with `surge token` command
           token: ${{ secrets.SURGE_TOKEN }}
           # your project path
-          project: /home/runner/work/the-vivi-project/the-vivi-project
+          project: /home/runner/work/the-vivi-project/the-vivi-project/code
