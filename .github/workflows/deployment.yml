@@ -8,10 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download dist folder
-        uses: actions/download-artifact@v3
-        with:
-          name: prod-dist
       - run: pwd && ls
       - run: cd /home/runner/work/the-vivi-project/code && ls
       - name: Publish to surge.sh
