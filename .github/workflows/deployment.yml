@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - run: pwd && ls
-      - run: cd /home/runner/work/the-vivi-project/code && ls
+      - run: cd /home/runner/work/the-vivi-project/the-vivi-project && ls
       - name: Publish to surge.sh
         # You may pin to the exact commit or the version.
         # uses: dswistowski/surge-sh-action@c09463ed5222f67391260fa806240d4e464743d0
