@@ -55,6 +55,8 @@ jobs:
       name: demo
       url: https://fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
     steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v4
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install Surge
