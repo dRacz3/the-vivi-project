@@ -76,7 +76,7 @@ jobs:
         
   stop-review:
     environment:
-      name: demo
+      name: demo-manual
       url: https://fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
     runs-on: ubuntu-latest
     steps:
