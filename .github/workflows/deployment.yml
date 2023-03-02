@@ -72,6 +72,9 @@ jobs:
           project: './public'
           login: ${{ secrets.surge_login }}
           token: ${{ secrets.surge_token }}
+      - name: Announce site url
+        run: echo 'site is deployed fuzzy-coach-$GITHUB_REF_SLUG.surge.sh'
+
         
         
   stop-review:
