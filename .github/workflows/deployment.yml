@@ -53,6 +53,9 @@ jobs:
     needs: [build]
     environment:
       name: demo
+    env:
+      SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+      SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
     steps:
       - name: Inject slug/short variables
         uses: rlespinasse/github-slug-action@v4
@@ -68,14 +71,7 @@ jobs:
           path: ./public
       - name: Check downloaded stuff again
         run: pwd && ls -lh && cd public && pwd && ls -lh && cd ..
-      - name: bevry-actions/surge
-        uses: bevry-actions/surge@v1.0.3
-        with:
-          # Your Surge email/username, get it via the `surge whoami` command.
-          surgeLogin: $SURGE_LOGIN
-          # The token to authorize the deployments to Surge, get via the `surge token` command.
-          surgeToken: $SURGE_TOKEN
-          # The path that you want to deploy to Surge.
-          surgeProject: public
+      - name: Deploy to Review Site
+        run: surge --project ./public --domain fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
       - name: Announce site url
         run: echo "site is deployed fuzzy-coach-$GITHUB_REF_SLUG.surge.sh"
