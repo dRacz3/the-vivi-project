@@ -50,7 +50,7 @@ jobs:
 
   deploy-review:
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: [build]
     environment:
       name: demo
       url: https://fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
@@ -66,4 +66,21 @@ jobs:
           name: website
           path: ./public
       - name: Deploy to Review Site
-        run: surge --project ./public --domain fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
+        run: echo "Deploying to fuzzy-coach-$GITHUB_REF_SLUG.surge.sh" && surge --project ./public --domain fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
+        
+        
+  stop-review:
+    environment:
+      name: demo
+      url: https://fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v4
+      - name: Surge.sh Teardown
+        uses: adrianjost/actions-surge.sh-teardown@v1.0.3
+        with:
+          # Regex string
+          regex: fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
+          # Output Actions instead of applying them
+          dryrun: True
