@@ -1,26 +1,81 @@
-name: Just Deploy
+name: My Workflow
 
-on: [pull_request, workflow_dispatch]
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
-  deploy:
-    needs: []
+  build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        node-version: [10.x]
     steps:
-      - uses: actions/checkout@v3
-      - run: pwd && ls
-      - run: cd /home/runner/work/the-vivi-project/the-vivi-project/code && ls
-      - name: Publish to surge.sh
-        # You may pin to the exact commit or the version.
-        # uses: dswistowski/surge-sh-action@c09463ed5222f67391260fa806240d4e464743d0
-        uses: dswistowski/surge-sh-action@v1.0.1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
         with:
-          # your surge.sh domain to deploy
-          domain: the-vivi-project.surge.sh
-          # surge.sh login
-          login: ${{ secrets.SURGE_LOGIN }}
-          # surge.sh token, generate it with `surge token` command
-          token: ${{ secrets.SURGE_TOKEN }}
-          # your project path
-          project: /home/runner/work/the-vivi-project/the-vivi-project/code
+          node-version: ${{ matrix.node-version }}
+      - name: Build Website
+        run: |
+          echo $GITHUB_SHA
+          cp -r ./code ./public
+          sed -i "s/%%VERSION%%/$GITHUB_SHA/g" ./public/index.html
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+      - name: Save Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: website
+          path: ./public
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: website
+      - name: Test Artifact
+        run: grep "Hello" ./public/index.html
+
+  deploy-review:
+    runs-on: ubuntu-latest
+    environment:
+      name: review/$GITHUB_REF_SLUG
+      url: https://fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Surge
+        run: npm install --global surge
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: website
+      - name: Deploy to Review Site
+        run: surge --project ./public --domain fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
+      - name: Add Stop Review Job
+        if: always()
+        run: echo "export STOP_REVIEW_JOB_ID=\${{ github.job_id }}" >> $GITHUB_ENV
+      - name: Stop Review Environment
+        if: always() && env.STOP_REVIEW_JOB_ID
+        uses: zyhou/github-actions-stop-deployment@v0.1.1
+        with:
+          job-id: ${{ env.STOP_REVIEW_JOB_ID }}
+        env:
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
