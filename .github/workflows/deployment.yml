@@ -61,11 +61,13 @@ jobs:
       - name: Install Surge
         run: npm install --global surge
       - name: Check downloaded stuff
-        run: ls -lh
+        run: pwd && ls -lh
       - uses: actions/download-artifact@v3
         with:
           name: website
           path: ./public
+      - name: Check downloaded stuff again
+        run: pwd && ls -lh
       - name: Deploy to Review site
         uses: dswistowski/surge-sh-action@v1
         with:
