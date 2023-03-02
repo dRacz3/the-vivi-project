@@ -68,12 +68,14 @@ jobs:
           path: ./public
       - name: Check downloaded stuff again
         run: pwd && ls -lh && cd public && pwd && ls -lh && cd ..
-      - name: Deploy to Review site
-        uses: dswistowski/surge-sh-action@v1
+      - name: bevry-actions/surge
+        uses: bevry-actions/surge@v1.0.3
         with:
-          domain: 'fuzzy-coach-$GITHUB_REF_SLUG.surge.sh'
-          project: './public'
-          login: ${{ secrets.surge_login }}
-          token: ${{ secrets.surge_token }}
+          # Your Surge email/username, get it via the `surge whoami` command.
+          surgeLogin: $SURGE_LOGIN
+          # The token to authorize the deployments to Surge, get via the `surge token` command.
+          surgeToken: $SURGE_TOKEN
+          # The path that you want to deploy to Surge.
+          surgeProject: public
       - name: Announce site url
         run: echo "site is deployed fuzzy-coach-$GITHUB_REF_SLUG.surge.sh"
