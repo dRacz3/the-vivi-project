@@ -1,4 +1,4 @@
-name: Deploy
+name: Stop deploy
 
 on: workflow_dispatch
 
