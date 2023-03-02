@@ -1,4 +1,4 @@
-name: My Workflow
+name: Deploy
 
 on: workflow_dispatch
 
@@ -74,21 +74,3 @@ jobs:
           token: ${{ secrets.surge_token }}
       - name: Announce site url
         run: echo 'site is deployed fuzzy-coach-$GITHUB_REF_SLUG.surge.sh'
-
-        
-        
-  stop-review:
-    environment:
-      name: demo-manual
-      url: https://fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
-    runs-on: ubuntu-latest
-    steps:
-      - name: Inject slug/short variables
-        uses: rlespinasse/github-slug-action@v4
-      - name: Surge.sh Teardown
-        uses: adrianjost/actions-surge.sh-teardown@v1.0.3
-        with:
-          # Regex string
-          regex: fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
-          # Output Actions instead of applying them
-          dryrun: True
