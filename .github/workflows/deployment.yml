@@ -65,8 +65,13 @@ jobs:
         with:
           name: website
           path: ./public
-      - name: Deploy to Review Site
-        run: echo "Deploying to fuzzy-coach-$GITHUB_REF_SLUG.surge.sh" && surge --project ./public --domain fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
+      - name: Deploy to Review site
+        uses: dswistowski/surge-sh-action@v1
+        with:
+          domain: 'fuzzy-coach-$GITHUB_REF_SLUG.surge.sh'
+          project: './public'
+          login: ${{ secrets.surge_login }}
+          token: ${{ secrets.surge_token }}
         
         
   stop-review:
