@@ -67,7 +67,7 @@ jobs:
           name: website
           path: ./public
       - name: Check downloaded stuff again
-        run: pwd && ls -lh
+        run: pwd && ls -lh && cd public && pwd && ls -lh && cd ..
       - name: Deploy to Review site
         uses: dswistowski/surge-sh-action@v1
         with:
