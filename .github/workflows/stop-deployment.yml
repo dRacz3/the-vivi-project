@@ -1,1 +1,26 @@
+name: Deploy
 
+on: workflow_dispatch
+
+jobs:
+  teardown-review:
+    runs-on: ubuntu-latest
+    environment:
+      name: demo
+    env:
+      SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+      SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+    steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v4
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Surge
+        run: npm install --global surge
+      - uses: actions/download-artifact@v3
+        with:
+          name: website
+          path: ./public
+      - name: Teardown site
+        run: surge teardown fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
+      
