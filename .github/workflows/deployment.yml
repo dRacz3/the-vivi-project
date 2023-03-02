@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test]
     environment:
-      name: review/$GITHUB_REF_SLUG
+      name: demo
       url: https://fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
     steps:
       - name: Checkout
@@ -65,13 +65,3 @@ jobs:
           path: ./public
       - name: Deploy to Review Site
         run: surge --project ./public --domain fuzzy-coach-$GITHUB_REF_SLUG.surge.sh
-      - name: Add Stop Review Job
-        if: always()
-        run: echo "export STOP_REVIEW_JOB_ID=\${{ github.job_id }}" >> $GITHUB_ENV
-      - name: Stop Review Environment
-        if: always() && env.STOP_REVIEW_JOB_ID
-        uses: zyhou/github-actions-stop-deployment@v0.1.1
-        with:
-          job-id: ${{ env.STOP_REVIEW_JOB_ID }}
-        env:
-          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
